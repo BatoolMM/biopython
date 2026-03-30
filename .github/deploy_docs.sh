@@ -148,8 +148,7 @@ git add $DEST_DIR/
 if [[ "dev" != "$DEST_DIR" ]]; then
     echo "Updating version"
     rm -rf latest
-    ln -s $VER latest
-    git commit latest -m "Automated version bump via ${COMMIT_HASH}"
+    ln -s "$DEST_DIR" latest
 fi
 
 echo "Preparing to deploy documentation"
