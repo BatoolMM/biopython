@@ -10,10 +10,16 @@ https://www.open-bio.org/category/obf-projects/biopython/
 
 The latest news is at the top of this file.
 
-(In progress, not yet released): Biopython 1.87
-===============================================
+30 March 2026: Biopython 1.87
+=============================
 
 Migrated from ``setup.py`` to ``pyproject.toml`` for packaging configuration.
+
+Addressed security issue CVE-2025-68463 in ``Bio.Entrez.Parser`` if parsing
+untrusted files.
+
+Additionally, a number of small bugs and typos have been fixed with additions
+to the test suite and type annotations.
 
 Many thanks to the Biopython developers and community for making this release
 possible, especially the following contributors:
