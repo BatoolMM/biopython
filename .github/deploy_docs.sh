@@ -107,7 +107,7 @@ echo "Aiming to deploy $SOURCE_DIR to $DEST_SLUG branch gh-pages as $DEST_DIR"
 # We have to create the SSH key with spaces and new lines, so
 # we un-escape whitespace and newline characters to recover
 # the SSH deploy key:
-python -c "import os; print(os.environ['DOC_KEY'].strip().replace(r'\ ', ' ').replace(r'\n', '\n'))" >$HOME/.biopython_doc_deploy.key
+python -c "import os; print(os.environ['DOC_KEY'].strip().replace(r'\ ', ' ').replace(r'\n', '\n'))" > $HOME/.biopython_doc_deploy.key
 # Check we have a sane looking line structure:
 if [ $(grep -c "^\-\-\-\-\-" $HOME/.biopython_doc_deploy.key) -ne 2 ]; then
     echo "ERROR: Failed to rebuild the SSH key,"
@@ -145,6 +145,12 @@ echo "Copying files"
 cp -R $SOURCE_DIR/* $DEST_DIR/
 echo "Staging files in git"
 git add $DEST_DIR/
+if [[ "dev" != "$DEST_DIR" ]]; then
+    echo "Updating version"
+    rm -rf latest
+    ln -s $VER latest
+    git commit latest -m "Automated version bump via ${COMMIT_HASH}"
+fi
 
 echo "Preparing to deploy documentation"
 
@@ -154,13 +160,7 @@ else
     echo "Making commit of new files"
     git config user.email "sphinx@example.org"
     git config user.name "Sphinx"
-    git commit -m "Automated update ${COMMIT_HASH}"
-    if [[ "dev" != "$DEST_DIR" ]]; then
-        echo "Updating version"
-        rm -rf latest
-        ln -s $VER latest
-        git commit latest -m "Automated version bump via ${COMMIT_HASH}"
-    fi
+    git commit -m "Biopython $DEST_DIR docs as of ${COMMIT_HASH}"
     echo "Finally, pushing to $DEST_SLUG gh-pages branch"
     git push origin gh-pages
     echo "Documentation deployed!"
