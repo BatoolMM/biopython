@@ -90,7 +90,7 @@ fi
 set -euo pipefail
 
 DEST_SLUG=biopython/docs
-DEST_DIR=$(python -c "import Bio; v=Bio.__version__; print('dev' if 'dev' in v else v)")
+VER=$(python -c "import Bio; v=Bio.__version__; print('dev' if 'dev' in v else v)")
 SOURCE_DIR=${BUILD_DIR:-$PWD}/Doc/_build/html
 WORKING_DIR=/tmp/deploy_biopython_docs
 COMMIT_HASH=$(git rev-parse HEAD) # For later when we commit the docs repository
@@ -101,7 +101,7 @@ if [ -z "$DEST_DIR" ]; then
     false
 fi
 
-DEST_DIR=$DEST_DIR/
+DEST_DIR=$VER/
 echo "Aiming to deploy $SOURCE_DIR to $DEST_SLUG branch gh-pages as $DEST_DIR"
 
 # We have to create the SSH key with spaces and new lines, so
@@ -145,7 +145,7 @@ echo "Copying files"
 cp -R $SOURCE_DIR/* $DEST_DIR/
 echo "Staging files in git"
 git add $DEST_DIR/
-if [[ "dev" != "$DEST_DIR" ]]; then
+if [[ "dev" != "$VER" ]]; then
     echo "Updating version"
     rm -rf latest
     ln -s "$DEST_DIR" latest
