@@ -68,11 +68,11 @@ fi
 #
 #     python -c "print(open('biopython_doc_key').read().strip().replace(' ', r'\ ').replace('\n', r'\\\n'))"
 #
-# In the CircleCI UI, click on "Project Settings" in the top right, 
+# In the CircleCI UI, click on "Project Settings" in the top right,
 # and go to "Environment Variables" on the left. Click "Add Environment
-# Variable". In the "Name" input, put "DOC_KEY" and paste the value 
+# Variable". In the "Name" input, put "DOC_KEY" and paste the value
 # you copied earlier into the "Value" input.
-# 
+#
 # Finally, we need to add a User Key to the CircleCI biopython project.
 # To do this, go to Biopython project in the CircleCI UI, click
 # "project settings" in the top right, click "SSH Keys", and click
@@ -90,15 +90,15 @@ fi
 set -euo pipefail
 
 DEST_SLUG=biopython/docs
-DEST_DIR=`python -c "import Bio; v=Bio.__version__; print('dev' if 'dev' in v else v)"`
+DEST_DIR=$(python -c "import Bio; v=Bio.__version__; print('dev' if 'dev' in v else v)")
 SOURCE_DIR=${BUILD_DIR:-$PWD}/Doc/_build/html
 WORKING_DIR=/tmp/deploy_biopython_docs
 COMMIT_HASH=$(git rev-parse HEAD) # For later when we commit the docs repository
 
 if [ -z "$DEST_DIR" ]; then
-   echo "ERROR: Failed to get Biopython version, is it not installed?"
-   python -c "import Bio; print(Bio.__version__)"
-   false
+    echo "ERROR: Failed to get Biopython version, is it not installed?"
+    python -c "import Bio; print(Bio.__version__)"
+    false
 fi
 
 DEST_DIR=$DEST_DIR/
@@ -107,9 +107,9 @@ echo "Aiming to deploy $SOURCE_DIR to $DEST_SLUG branch gh-pages as $DEST_DIR"
 # We have to create the SSH key with spaces and new lines, so
 # we un-escape whitespace and newline characters to recover
 # the SSH deploy key:
-python -c "import os; print(os.environ['DOC_KEY'].strip().replace(r'\ ', ' ').replace(r'\n', '\n'))" > $HOME/.biopython_doc_deploy.key
+python -c "import os; print(os.environ['DOC_KEY'].strip().replace(r'\ ', ' ').replace(r'\n', '\n'))" >$HOME/.biopython_doc_deploy.key
 # Check we have a sane looking line structure:
-if [ `grep -c "^\-\-\-\-\-" $HOME/.biopython_doc_deploy.key` -ne 2 ]; then
+if [ $(grep -c "^\-\-\-\-\-" $HOME/.biopython_doc_deploy.key) -ne 2 ]; then
     echo "ERROR: Failed to rebuild the SSH key,"
     wc -l $HOME/.biopython_doc_deploy.key
     md5sum $HOME/.biopython_doc_deploy.key
@@ -155,6 +155,12 @@ else
     git config user.email "sphinx@example.org"
     git config user.name "Sphinx"
     git commit -m "Automated update ${COMMIT_HASH}"
+    if [[ "dev" != "$DEST_DIR" ]]; then
+        echo "Updating version"
+        rm -rf latest
+        ln -s $VER latest
+        git commit latest -m "Automated version bump via ${COMMIT_HASH}"
+    fi
     echo "Finally, pushing to $DEST_SLUG gh-pages branch"
     git push origin gh-pages
     echo "Documentation deployed!"
