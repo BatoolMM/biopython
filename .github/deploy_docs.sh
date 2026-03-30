@@ -148,7 +148,7 @@ if [[ "dev" != "$VER" ]]; then
     echo "Updating version"
     rm -rf latest
     ln -s "$DEST_DIR" latest
-    git add "$DEST_DIR"
+    git add latest
 fi
 
 echo "Preparing to deploy documentation"
