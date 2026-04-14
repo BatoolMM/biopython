@@ -2185,7 +2185,7 @@ to be used for the alignments:
    <BLANKLINE>
 
 The ``wildcard``, ``match_score``, and ``mismatch_score`` parameters are
-defined in the same was as for the ``PairwiseAligner`` class described
+defined in the same way as for the ``PairwiseAligner`` class described
 above (see Section :ref:`sec:pairwise-aligner`). The values
 specified by the ``frameshift_minus_two_score``,
 ``frameshift_minus_one_score``, ``frameshift_plus_one_score``, and
